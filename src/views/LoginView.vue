@@ -126,12 +126,12 @@
           </div>
           
           <div class="mt-6 text-center">
-            <p class="text-gray-300">
+            <p class="text-gray-500">
               Don't have an account? 
               <button 
                 type="button" 
                 @click="currentView = 'register'"
-                class="text-purple-300 hover:text-purple-100 font-semibold transition-colors duration-200"
+                class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
                 Sign up
               </button>
@@ -259,12 +259,12 @@
           </div>
           
           <div class="mt-6 text-center">
-            <p class="text-gray-300">
+            <p class="text-gray-500">
               Already have an account? 
               <button 
                 type="button" 
                 @click="currentView = 'login'"
-                class="text-purple-300 hover:text-purple-100 font-semibold transition-colors duration-200"
+                class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
                 Sign in
               </button>
@@ -303,12 +303,12 @@
           </div>
           
           <div class="mt-6 text-center">
-            <p class="text-gray-300">
+            <p class="text-gray-500">
               Remember your password? 
               <button 
                 type="button" 
                 @click="currentView = 'login'"
-                class="text-purple-300 hover:text-purple-100 font-semibold transition-colors duration-200"
+                class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
                 Sign in
               </button>
