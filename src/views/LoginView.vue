@@ -620,6 +620,7 @@ watch(currentView, () => {
   clearMessages()
   showPassword.value = false
   showConfirmPassword.value = false
+  document.title = getTitle() // Dynamically update the document title
 })
 
 // Lifecycle
@@ -627,15 +628,15 @@ onMounted(() => {
   // Smooth entrance animation without continuous blinking
   const card = document.querySelector('.card-entrance')
   if (card) {
-    card.style.opacity = '0'
-    card.style.transform = 'translateY(20px)'
-    
+    (card as HTMLElement).style.opacity = '0'
+    ;(card as HTMLElement).style.transform = 'translateY(20px)'
     setTimeout(() => {
-      card.style.transition = 'all 0.6s ease-out'
-      card.style.opacity = '1'
-      card.style.transform = 'translateY(0)'
+      (card as HTMLElement).style.transition = 'all 0.6s ease-out'
+      ;(card as HTMLElement).style.opacity = '1'
+      ;(card as HTMLElement).style.transform = 'translateY(0)'
     }, 100)
   }
+  document.title = getTitle() // Set the title on mount
 })
 </script>
 
