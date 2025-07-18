@@ -31,8 +31,24 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/DashboardView.vue'),
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/UserProfileView.vue'),
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'login') {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      // Already logged in, redirect to dashboard
+      return next({ name: 'dashboard' })
+    }
+  }
+  next()
 })
 
 export default router

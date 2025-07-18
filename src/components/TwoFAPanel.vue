@@ -34,7 +34,7 @@
 
     <!-- Disable 2FA: Input code -->
     <div v-if="showDisable" class="mt-4">
-      <input v-model="disableCode" type="text" placeholder="Enter 2FA code to disable" class="form-input mb-2" />
+      <input v-model="disableCode" type="text" placeholder="Enter 2FA code to disable" class="form-input" />
       <button @click="disable2FA" :disabled="loading" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">Disable 2FA</button>
       <button @click="cancelDisable" class="ml-2 text-gray-500 hover:text-gray-700">Cancel</button>
     </div>
