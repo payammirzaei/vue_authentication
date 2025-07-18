@@ -49,7 +49,7 @@
                 <p class="mt-1 text-sm text-gray-600">Here's your profile information</p>
               </div>
             </div>
-            
+
             <div class="mt-6 border-t border-gray-200">
               <dl class="divide-y divide-gray-200">
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
@@ -96,7 +96,7 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Session Status</h3>
             <div class="space-y-2 text-sm">
               <p class="text-gray-600">
-                Session expires: 
+                Session expires:
                 <span class="font-medium text-gray-900">{{ sessionExpiry }}</span>
               </p>
               <p class="text-gray-600">
@@ -105,13 +105,17 @@
             </div>
           </div>
         </div>
+
+        <!-- 2FA Panel -->
+        <TwoFAPanel />
       </div>
     </main>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import TwoFAPanel from '@/components/TwoFAPanel.vue'
 
 const userData = ref(null)
 const loading = ref(true)
@@ -119,6 +123,18 @@ const error = ref(null)
 const sessionExpiry = ref('--')
 const refreshInterval = ref(null)
 const tokenExpiry = ref(null)
+
+// 2FA Panel State
+const twoFAStatus = ref('disabled')
+const showSetup2FA = ref(false)
+const showDisable2FA = ref(false)
+const qrCode = ref('')
+const secret = ref('')
+const setupCode = ref('')
+const disableCode = ref('')
+const loading2FA = ref(false)
+const twoFAMessage = ref('')
+const twoFAError = ref(false)
 
 const API_BASE_URL = 'http://localhost:8000'
 
@@ -138,7 +154,7 @@ const sanitizeString = (str) => {
 // Validate and sanitize user data
 const sanitizedUserData = computed(() => {
   if (!userData.value) return null
-  
+
   return {
     fullName: sanitizeString(`${userData.value.fname || ''} ${userData.value.lname || ''}`),
     email: sanitizeString(userData.value.email),
@@ -187,7 +203,7 @@ const checkAuth = () => {
 const parseTokenExpiry = (token) => {
   try {
     if (!isValidToken(token)) return null
-    
+
     const payload = JSON.parse(atob(token.split('.')[1]))
     if (payload.exp) {
       return new Date(payload.exp * 1000)
@@ -225,20 +241,20 @@ const refreshToken = async () => {
     }
 
     const data = await response.json()
-    
+
     // Validate received tokens
     if (!isValidToken(data.access_token) || !isValidToken(data.refresh_token)) {
       throw new Error('Invalid tokens received')
     }
-    
+
     // Update stored tokens
     localStorage.setItem('access_token', data.access_token)
     localStorage.setItem('refresh_token', data.refresh_token)
-    
+
     // Update token expiry
     tokenExpiry.value = parseTokenExpiry(data.access_token)
     updateSessionExpiry()
-    
+
     return data.access_token
   } catch (err) {
     console.error('Token refresh failed:', err)
@@ -260,7 +276,7 @@ const authenticatedFetch = async (url, options = {}) => {
   if (!token) {
     throw new Error('No valid token available')
   }
-  
+
   const makeRequest = async (accessToken) => {
     return fetch(url, {
       ...options,
@@ -274,7 +290,7 @@ const authenticatedFetch = async (url, options = {}) => {
   }
 
   let response = await makeRequest(token)
-  
+
   // If token is expired, refresh and retry once
   if (response.status === 401) {
     try {
@@ -284,7 +300,7 @@ const authenticatedFetch = async (url, options = {}) => {
       throw new Error('Authentication failed')
     }
   }
-  
+
   return response
 }
 
@@ -293,16 +309,16 @@ const validateUserData = (data) => {
   if (!data || typeof data !== 'object') {
     throw new Error('Invalid user data received')
   }
-  
+
   // Validate required fields
   if (!data.email || typeof data.email !== 'string') {
     throw new Error('Invalid email in user data')
   }
-  
+
   if (data.id === undefined || data.id === null) {
     throw new Error('Invalid user ID in user data')
   }
-  
+
   return true
 }
 
@@ -311,18 +327,18 @@ const fetchUserData = async () => {
   try {
     loading.value = true
     error.value = null
-    
+
     const response = await authenticatedFetch(`${API_BASE_URL}/users/me`)
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch user data')
     }
-    
+
     const data = await response.json()
-    
+
     // Validate received data
     validateUserData(data)
-    
+
     userData.value = data
   } catch (err) {
     error.value = err.message
@@ -337,16 +353,16 @@ const logout = () => {
   // Clear all tokens
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
-  
+
   // Clear intervals
   if (refreshInterval.value) {
     clearInterval(refreshInterval.value)
   }
-  
+
   // Clear session data
   userData.value = null
   tokenExpiry.value = null
-  
+
   // Redirect to login
   window.location.href = '/login'
 }
@@ -355,21 +371,21 @@ const logout = () => {
 const setupTokenRefresh = () => {
   const token = getSecureToken()
   if (!token) return
-  
+
   tokenExpiry.value = parseTokenExpiry(token)
   updateSessionExpiry()
-  
+
   // Clear any existing interval
   if (refreshInterval.value) {
     clearInterval(refreshInterval.value)
   }
-  
+
   // Set up refresh 5 minutes before expiry
   if (tokenExpiry.value) {
     const now = new Date()
     const timeUntilExpiry = tokenExpiry.value.getTime() - now.getTime()
     const refreshTime = Math.max(timeUntilExpiry - 300000, 60000) // 5 min before expiry, min 1 min
-    
+
     refreshInterval.value = setTimeout(async () => {
       try {
         await refreshToken()
@@ -379,6 +395,96 @@ const setupTokenRefresh = () => {
       }
     }, refreshTime)
   }
+}
+
+// 2FA Panel Methods
+const setup2FA = async () => {
+  loading2FA.value = true
+  twoFAMessage.value = ''
+  twoFAError.value = false
+  try {
+    const response = await fetch('http://localhost:8000/users/2fa/setup', {
+      method: 'POST',
+      credentials: 'include',
+    })
+    if (!response.ok) throw new Error('Failed to get 2FA setup info')
+    const data = await response.json()
+    qrCode.value = data.qr_code
+    secret.value = data.secret
+    showSetup2FA.value = true
+  } catch {
+    twoFAMessage.value = 'Could not start 2FA setup.'
+    twoFAError.value = true
+  } finally {
+    loading2FA.value = false
+  }
+}
+
+const enable2FA = async () => {
+  loading2FA.value = true
+  twoFAMessage.value = ''
+  twoFAError.value = false
+  try {
+    const response = await fetch('http://localhost:8000/users/2fa/enable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ code: setupCode.value })
+    })
+    if (!response.ok) {
+      const data = await response.json()
+      throw new Error(data.detail ? (Array.isArray(data.detail) ? data.detail.map((e)=>e.msg).join(', ') : data.detail) : 'Failed to enable 2FA')
+    }
+    twoFAMessage.value = '2FA enabled successfully!'
+    twoFAError.value = false
+    twoFAStatus.value = 'enabled'
+    showSetup2FA.value = false
+    setupCode.value = ''
+  } catch {
+    twoFAMessage.value = 'Failed to enable 2FA.'
+    twoFAError.value = true
+  } finally {
+    loading2FA.value = false
+  }
+}
+
+const disable2FA = async () => {
+  loading2FA.value = true
+  twoFAMessage.value = ''
+  twoFAError.value = false
+  try {
+    const response = await fetch('http://localhost:8000/users/2fa/disable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ code: disableCode.value })
+    })
+    if (!response.ok) {
+      const data = await response.json()
+      throw new Error(data.detail ? (Array.isArray(data.detail) ? data.detail.map((e)=>e.msg).join(', ') : data.detail) : 'Failed to disable 2FA')
+    }
+    twoFAMessage.value = '2FA disabled successfully!'
+    twoFAError.value = false
+    twoFAStatus.value = 'disabled'
+    showDisable2FA.value = false
+    disableCode.value = ''
+  } catch {
+    twoFAMessage.value = 'Failed to disable 2FA.'
+    twoFAError.value = true
+  } finally {
+    loading2FA.value = false
+  }
+}
+
+const cancelSetup2FA = () => {
+  showSetup2FA.value = false
+  qrCode.value = ''
+  secret.value = ''
+  setupCode.value = ''
+}
+const cancelDisable2FA = () => {
+  showDisable2FA.value = false
+  disableCode.value = ''
 }
 
 // Component lifecycle
