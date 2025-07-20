@@ -4,11 +4,11 @@
     <div class="floating-shapes">
       <div class="shape" v-for="n in 6" :key="n"></div>
     </div>
-    
+
     <div class="w-full max-w-md relative overflow-hidden bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 rounded-3xl shadow-2xl p-8 card-entrance">
       <!-- Decorative Top Border -->
       <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500"></div>
-      
+
       <!-- Success Message -->
       <Transition name="slide-down">
         <div v-if="showSuccess" class="mb-6 p-4 rounded-xl bg-green-500 bg-opacity-20 border border-green-400 text-green-100 success-bounce">
@@ -18,7 +18,7 @@
           </div>
         </div>
       </Transition>
-      
+
       <!-- Error Messages -->
       <Transition name="slide-down">
         <div v-if="errors.length > 0" class="mb-6 p-4 rounded-xl bg-red-500 bg-opacity-20 border border-red-400 text-red-100 error-shake">
@@ -31,7 +31,7 @@
           </ul>
         </div>
       </Transition>
-      
+
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="inline-block p-4 rounded-2xl bg-white bg-opacity-10 mb-4 pulse-glow">
@@ -42,7 +42,7 @@
         </h1>
         <p class="text-gray-800">{{ getSubtitle() }}</p>
       </div>
-      
+
       <!-- Form Content -->
       <Transition name="slide-fade" mode="out-in">
         <!-- Login Form -->
@@ -50,27 +50,27 @@
           <div class="space-y-6">
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Email</label>
-              <input 
-                v-model="loginForm.email" 
-                type="email" 
-                required 
+              <input
+                v-model="loginForm.email"
+                type="email"
+                required
                 class="form-input"
                 placeholder="Enter your email"
               />
             </div>
-            
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Password</label>
               <div class="relative">
-                <input 
-                  v-model="loginForm.password" 
-                  :type="showPassword ? 'text' : 'password'" 
-                  required 
+                <input
+                  v-model="loginForm.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  required
                   class="form-input pr-12"
                   placeholder="Enter your password"
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   @click="showPassword = !showPassword"
                   class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                 >
@@ -79,11 +79,11 @@
                 </button>
               </div>
             </div>
-            
-            
+
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">2FA Code (if enabled)</label>
-              <input 
+              <input
                 v-model="loginForm.two_fa_code"
                 type="text"
                 class="form-input"
@@ -93,24 +93,24 @@
 
 <div class="flex items-center justify-between">
               <label class="flex items-center">
-                <input 
-                  type="checkbox" 
-                  v-model="rememberMe" 
+                <input
+                  type="checkbox"
+                  v-model="rememberMe"
                   class="rounded border-gray-600 text-purple-600 focus:ring-purple-700 bg-gray-700"
                 />
                 <span class="ml-2 text-sm text-gray-500">Remember me</span>
               </label>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 @click="currentView = 'forgot'"
                 class="text-sm text-purple-500 hover:text-purple-100 transition-colors duration-200"
               >
                 Forgot password?
               </button>
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               :disabled="loading"
               class="submit-button"
             >
@@ -124,12 +124,12 @@
               <span v-else>Sign In</span>
             </button>
           </div>
-          
+
           <div class="mt-6 text-center">
             <p class="text-gray-500">
-              Don't have an account? 
-              <button 
-                type="button" 
+              Don't have an account?
+              <button
+                type="button"
                 @click="currentView = 'register'"
                 class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
@@ -138,67 +138,67 @@
             </p>
           </div>
         </form>
-        
+
         <!-- Register Form -->
         <form v-else-if="currentView === 'register'" @submit.prevent="handleRegister" key="register">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div class="input-group">
                 <label class="block text-sm font-medium text-white mb-2">First Name</label>
-                <input 
-                  v-model="registerForm.fname" 
-                  type="text" 
-                  required 
+                <input
+                  v-model="registerForm.fname"
+                  type="text"
+                  required
                   class="form-input"
                   placeholder="John"
                 />
               </div>
               <div class="input-group">
                 <label class="block text-sm font-medium text-white mb-2">Last Name</label>
-                <input 
-                  v-model="registerForm.lname" 
-                  type="text" 
-                  required 
+                <input
+                  v-model="registerForm.lname"
+                  type="text"
+                  required
                   class="form-input"
                   placeholder="Doe"
                 />
               </div>
             </div>
-            
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Email</label>
-              <input 
-                v-model="registerForm.email" 
-                type="email" 
-                required 
+              <input
+                v-model="registerForm.email"
+                type="email"
+                required
                 class="form-input"
                 placeholder="john@example.com"
               />
             </div>
-            
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Phone</label>
-              <input 
-                v-model="registerForm.phone" 
-                type="tel" 
-                required 
+              <input
+                v-model="registerForm.phone"
+                type="tel"
+                required
                 class="form-input"
                 placeholder="+1 (555) 123-4567"
               />
             </div>
-            
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Password</label>
               <div class="relative">
-                <input 
-                  v-model="registerForm.password" 
-                  :type="showPassword ? 'text' : 'password'" 
-                  required 
+                <input
+                  v-model="registerForm.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  required
                   class="form-input pr-12"
                   placeholder="Create a strong password"
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   @click="showPassword = !showPassword"
                   class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                 >
@@ -207,19 +207,19 @@
                 </button>
               </div>
             </div>
-            
+
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Confirm Password</label>
               <div class="relative">
-                <input 
-                  v-model="confirmPassword" 
-                  :type="showConfirmPassword ? 'text' : 'password'" 
-                  required 
+                <input
+                  v-model="confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  required
                   class="form-input pr-12"
                   placeholder="Confirm your password"
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   @click="showConfirmPassword = !showConfirmPassword"
                   class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                 >
@@ -228,22 +228,22 @@
                 </button>
               </div>
             </div>
-            
+
             <div class="flex items-center">
-              <input 
-                id="terms" 
-                type="checkbox" 
-                v-model="acceptTerms" 
-                required 
+              <input
+                id="terms"
+                type="checkbox"
+                v-model="acceptTerms"
+                required
                 class="rounded border-gray-600 text-purple-600 focus:ring-purple-500 bg-gray-700"
               />
               <label for="terms" class="ml-2 text-sm text-gray-300">
                 I agree to the <a href="#" class="text-purple-300 hover:text-purple-100">Terms of Service</a> and <a href="#" class="text-purple-300 hover:text-purple-100">Privacy Policy</a>
               </label>
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               :disabled="loading"
               class="submit-button"
             >
@@ -257,12 +257,12 @@
               <span v-else>Create Account</span>
             </button>
           </div>
-          
+
           <div class="mt-6 text-center">
             <p class="text-gray-500">
-              Already have an account? 
-              <button 
-                type="button" 
+              Already have an account?
+              <button
+                type="button"
                 @click="currentView = 'login'"
                 class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
@@ -271,23 +271,23 @@
             </p>
           </div>
         </form>
-        
+
         <!-- Forgot Password Form -->
         <form v-else-if="currentView === 'forgot'" @submit.prevent="handleForgotPassword" key="forgot">
           <div class="space-y-6">
             <div class="input-group">
               <label class="block text-sm font-medium text-white mb-2">Email</label>
-              <input 
-                v-model="forgotForm.email" 
-                type="email" 
-                required 
+              <input
+                v-model="forgotForm.email"
+                type="email"
+                required
                 class="form-input"
                 placeholder="Enter your email address"
               />
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               :disabled="loading"
               class="submit-button"
             >
@@ -301,12 +301,12 @@
               <span v-else>Send Reset Link</span>
             </button>
           </div>
-          
+
           <div class="mt-6 text-center">
             <p class="text-gray-500">
-              Remember your password? 
-              <button 
-                type="button" 
+              Remember your password?
+              <button
+                type="button"
                 @click="currentView = 'login'"
                 class="text-purple-600 hover:text-purple-100 font-semibold transition-colors duration-200"
               >
@@ -322,12 +322,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted } from 'vue'
-import { 
-  LockClosedIcon, 
-  EyeIcon, 
-  EyeSlashIcon, 
-  CheckCircleIcon, 
-  ExclamationTriangleIcon 
+import {
+  LockClosedIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 
 // Types
@@ -437,7 +437,7 @@ const showSuccessMessage = (message: string): void => {
 
 const validateForm = (): boolean => {
   clearMessages()
-  
+
   if (currentView.value === 'register') {
     if (registerForm.password !== confirmPassword.value) {
       showError('Passwords do not match')
@@ -452,18 +452,18 @@ const validateForm = (): boolean => {
       return false
     }
   }
-  
+
   return true
 }
 
 const handleLogin = async (): Promise<void> => {
   if (!validateForm()) return
-  
+
   loading.value = true
   clearMessages()
-  
+
   try {
-    const response = await fetch('http://localhost:8000/auth/login-json', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/login-json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -474,17 +474,17 @@ const handleLogin = async (): Promise<void> => {
         two_fa_code: loginForm.two_fa_code || null
       })
     })
-    
+
     const data = await response.json()
-    
+
     if (response.ok) {
       const authData = data as AuthResponse
       showSuccessMessage('Login successful! Redirecting...')
-      
+
       // Store tokens
       localStorage.setItem('access_token', authData.access_token)
       localStorage.setItem('refresh_token', authData.refresh_token)
-      
+
       // Redirect to dashboard
       setTimeout(() => {
         console.log('Redirecting to dashboard...')
@@ -493,8 +493,8 @@ const handleLogin = async (): Promise<void> => {
     } else {
       const errorData = data as ErrorResponse
       if (errorData.detail) {
-        errors.value = Array.isArray(errorData.detail) 
-          ? errorData.detail.map(err => err.msg) 
+        errors.value = Array.isArray(errorData.detail)
+          ? errorData.detail.map(err => err.msg)
           : [errorData.detail as string]
       } else {
         showError('Login failed. Please check your credentials.')
@@ -510,12 +510,12 @@ const handleLogin = async (): Promise<void> => {
 
 const handleRegister = async (): Promise<void> => {
   if (!validateForm()) return
-  
+
   loading.value = true
   clearMessages()
-  
+
   try {
-    const response = await fetch('http://localhost:8000/auth/register', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -528,17 +528,17 @@ const handleRegister = async (): Promise<void> => {
         phone: registerForm.phone
       })
     })
-    
+
     const data = await response.json()
-    
+
     if (response.ok) {
       const authData = data as AuthResponse
       showSuccessMessage('Account created successfully! Please sign in.')
-      
+
       // Store tokens
       localStorage.setItem('access_token', authData.access_token)
       localStorage.setItem('refresh_token', authData.refresh_token)
-      
+
       // Reset form
       Object.assign(registerForm, {
         email: '',
@@ -549,7 +549,7 @@ const handleRegister = async (): Promise<void> => {
       })
       confirmPassword.value = ''
       acceptTerms.value = false
-      
+
       // Switch to login after delay
       setTimeout(() => {
         currentView.value = 'login'
@@ -557,8 +557,8 @@ const handleRegister = async (): Promise<void> => {
     } else {
       const errorData = data as ErrorResponse
       if (errorData.detail) {
-        errors.value = Array.isArray(errorData.detail) 
-          ? errorData.detail.map(err => err.msg) 
+        errors.value = Array.isArray(errorData.detail)
+          ? errorData.detail.map(err => err.msg)
           : [errorData.detail as string]
       } else {
         showError('Registration failed. Please try again.')
@@ -574,12 +574,12 @@ const handleRegister = async (): Promise<void> => {
 
 const handleForgotPassword = async (): Promise<void> => {
   if (!validateForm()) return
-  
+
   loading.value = true
   clearMessages()
-  
+
   try {
-    const response = await fetch('http://localhost:8000/auth/forgot-password', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -588,11 +588,11 @@ const handleForgotPassword = async (): Promise<void> => {
         email: forgotForm.email
       })
     })
-    
+
     if (response.ok) {
       showSuccessMessage('Password reset link sent to your email!')
       forgotForm.email = ''
-      
+
       setTimeout(() => {
         currentView.value = 'login'
       }, 3000)
@@ -600,8 +600,8 @@ const handleForgotPassword = async (): Promise<void> => {
       const data = await response.json()
       const errorData = data as ErrorResponse
       if (errorData.detail) {
-        errors.value = Array.isArray(errorData.detail) 
-          ? errorData.detail.map(err => err.msg) 
+        errors.value = Array.isArray(errorData.detail)
+          ? errorData.detail.map(err => err.msg)
           : [errorData.detail as string]
       } else {
         showError('Failed to send reset link. Please try again.')
@@ -871,7 +871,7 @@ onMounted(() => {
   .grid-cols-2 {
     grid-template-columns: 1fr;
   }
-  
+
   .card-entrance {
     margin: 16px;
     padding: 24px;

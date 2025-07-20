@@ -69,7 +69,7 @@ const fetchUserStatus = async () => {
       return
     }
 
-    const response = await fetch('http://localhost:8000/users/me', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const setup2FA = async () => {
       throw new Error('No authentication token found')
     }
 
-    const response = await fetch('http://localhost:8000/users/2fa/setup', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/setup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const enable2FA = async () => {
       throw new Error('No authentication token found')
     }
 
-    const response = await fetch('http://localhost:8000/users/2fa/enable', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/enable`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ const disable2FA = async () => {
       throw new Error('No authentication token found')
     }
 
-    const response = await fetch('http://localhost:8000/users/2fa/disable', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/disable`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

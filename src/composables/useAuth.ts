@@ -1,7 +1,5 @@
 import { ref } from 'vue'
 
-const API_BASE_URL = 'http://localhost:8000'
-
 const user = ref(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -10,7 +8,7 @@ const login = async (email: string, password: string, two_fa_code?: string) => {
   loading.value = true
   error.value = null
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login-json`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/login-json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -46,7 +44,7 @@ const register = async (form: { email: string, password: string, fname: string, 
   loading.value = true
   error.value = null
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -78,7 +76,7 @@ const fetchUser = async () => {
   loading.value = true
   error.value = null
   try {
-    const response = await fetch(`${API_BASE_URL}/user/me`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/user/me`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -106,7 +104,7 @@ const logout = async () => {
   loading.value = true
   error.value = null
   try {
-    await fetch(`${API_BASE_URL}/auth/logout`, {
+    await fetch(`${import.meta.env.VITE_BACKEND}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     })

@@ -1,85 +1,46 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Navigation Header -->
-    <nav class="bg-white shadow-sm border-b">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <h1 class="text-xl font-semibold text-gray-900">Dashboard</h1>
-          </div>
-          <button
-            @click="logout"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="px-4 py-6 sm:px-0">
-        <!-- Loading State -->
-        <div v-if="loading" class="flex justify-center items-center h-64">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex">
+    <DashboardSidebar />
+    <div class="flex-1 flex flex-col min-h-screen">
+      <DashboardHeader :userName="userName" :avatarUrl="avatarUrl" @logout="logout" />
+      <main class="flex-1 p-10 bg-gradient-to-br from-gray-50 to-blue-50">
+        <!-- Dashboard cards and stats here -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          <!-- Profile Card -->
+          <div class="relative bg-white rounded-2xl shadow-xl p-8 col-span-1 overflow-hidden group hover:shadow-2xl transition">
+            <div class="absolute left-0 top-0 h-full w-2 bg-blue-500 rounded-l-2xl group-hover:w-3 transition-all"></div>
+            <h2 class="text-lg font-bold text-blue-700 mb-4 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.607 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Profile
+            </h2>
+            <div v-if="loading" class="flex justify-center items-center h-32">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-red-800">Error</h3>
-              <p class="mt-1 text-sm text-red-700">{{ sanitizedError }}</p>
+            <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-2 mb-2">
+              <p class="text-sm text-red-700">{{ sanitizedError }}</p>
             </div>
-          </div>
-        </div>
-
-        <!-- User Data Display -->
-        <div v-else-if="userData" class="bg-white shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <div class="sm:flex sm:items-center">
-              <div class="sm:flex-auto">
-                <h2 class="text-lg font-medium text-gray-900">Welcome back!</h2>
-                <p class="mt-1 text-sm text-gray-600">Here's your profile information</p>
-              </div>
-            </div>
-
-            <div class="mt-6 border-t border-gray-200">
+            <div v-else-if="userData">
               <dl class="divide-y divide-gray-200">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500">Full Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                    {{ sanitizedUserData.fullName }}
-                  </dd>
+                <div class="py-2 flex justify-between">
+                  <dt class="text-sm text-gray-500">Full Name</dt>
+                  <dd class="text-sm text-gray-900 font-semibold">{{ sanitizedUserData.fullName }}</dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500">Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                    {{ sanitizedUserData.email }}
-                  </dd>
+                <div class="py-2 flex justify-between">
+                  <dt class="text-sm text-gray-500">Email</dt>
+                  <dd class="text-sm text-gray-900 font-semibold">{{ sanitizedUserData.email }}</dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500">Phone</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                    {{ sanitizedUserData.phone }}
-                  </dd>
+                <div class="py-2 flex justify-between">
+                  <dt class="text-sm text-gray-500">Phone</dt>
+                  <dd class="text-sm text-gray-900 font-semibold">{{ sanitizedUserData.phone }}</dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500">User ID</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                    {{ sanitizedUserData.id }}
-                  </dd>
+                <div class="py-2 flex justify-between">
+                  <dt class="text-sm text-gray-500">User ID</dt>
+                  <dd class="text-sm text-gray-900 font-semibold">{{ sanitizedUserData.id }}</dd>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
-                  <dt class="text-sm font-medium text-gray-500">Status</dt>
-                  <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                <div class="py-2 flex justify-between">
+                  <dt class="text-sm text-gray-500">Status</dt>
+                  <dd>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
                           :class="userData.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
                       {{ userData.is_active ? 'Active' : 'Inactive' }}
                     </span>
@@ -88,34 +49,86 @@
               </dl>
             </div>
           </div>
-        </div>
 
-        <!-- Session Status -->
-        <div class="mt-6 bg-white shadow rounded-lg">
-          <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Session Status</h3>
+          <!-- Session Card -->
+          <div class="relative bg-white rounded-2xl shadow-xl p-8 col-span-1 overflow-hidden group hover:shadow-2xl transition">
+            <div class="absolute left-0 top-0 h-full w-2 bg-purple-500 rounded-l-2xl group-hover:w-3 transition-all"></div>
+            <h2 class="text-lg font-bold text-purple-700 mb-4 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Session
+            </h2>
             <div class="space-y-2 text-sm">
               <p class="text-gray-600">
                 Session expires:
-                <span class="font-medium text-gray-900">{{ sessionExpiry }}</span>
+                <span class="font-semibold text-gray-900">{{ sessionExpiry }}</span>
               </p>
               <p class="text-gray-600">
-                Auto-refresh: Enabled
+                Auto-refresh: <span class="text-green-700 font-semibold">Enabled</span>
               </p>
             </div>
           </div>
+
+          <!-- 2FA Card -->
+          <div class="relative bg-white rounded-2xl shadow-xl p-8 col-span-1 flex flex-col overflow-hidden group hover:shadow-2xl transition">
+            <div class="absolute left-0 top-0 h-full w-2 bg-pink-500 rounded-l-2xl group-hover:w-3 transition-all"></div>
+            <h2 class="text-lg font-bold text-pink-700 mb-4 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9a2 2 0 012-2h6z"/></svg>
+              2FA
+            </h2>
+            <TwoFAPanel class="flex-1" />
+          </div>
         </div>
 
-        <!-- 2FA Panel -->
-        <TwoFAPanel />
-      </div>
-    </main>
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div class="bg-gradient-to-r from-blue-500 to-blue-400 shadow-lg rounded-2xl p-6 flex items-center text-white relative overflow-hidden group">
+            <div class="absolute right-4 top-4 opacity-20 group-hover:opacity-40 transition-all">
+              <svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m4 4v-6a2 2 0 00-2-2H7a2 2 0 00-2 2v6"/></svg>
+            </div>
+            <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m4 4v-6a2 2 0 00-2-2H7a2 2 0 00-2 2v6"/></svg>
+            </div>
+            <div>
+              <div class="text-3xl font-extrabold">12</div>
+              <div class="text-sm font-medium">Logins this month</div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-r from-green-500 to-green-400 shadow-lg rounded-2xl p-6 flex items-center text-white relative overflow-hidden group">
+            <div class="absolute right-4 top-4 opacity-20 group-hover:opacity-40 transition-all">
+              <svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <div class="text-3xl font-extrabold">98%</div>
+              <div class="text-sm font-medium">2FA Success Rate</div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-r from-yellow-400 to-yellow-300 shadow-lg rounded-2xl p-6 flex items-center text-yellow-900 relative overflow-hidden group">
+            <div class="absolute right-4 top-4 opacity-20 group-hover:opacity-40 transition-all">
+              <svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="flex-shrink-0 bg-white/20 rounded-full p-3 mr-4">
+              <svg class="w-7 h-7 text-yellow-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <div class="text-3xl font-extrabold">2 min ago</div>
+              <div class="text-sm font-medium">Last activity</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import TwoFAPanel from '@/components/TwoFAPanel.vue'
+import DashboardSidebar from '@/components/DashboardSidebar.vue'
+import DashboardHeader from '@/components/DashboardHeader.vue'
+import UserProfileView from '@/views/UserProfileView.vue'
 
 const userData = ref(null)
 const loading = ref(true)
@@ -135,8 +148,6 @@ const disableCode = ref('')
 const loading2FA = ref(false)
 const twoFAMessage = ref('')
 const twoFAError = ref(false)
-
-const API_BASE_URL = 'http://localhost:8000'
 
 // Sanitization function to prevent XSS
 const sanitizeString = (str) => {
@@ -222,7 +233,7 @@ const refreshToken = async () => {
       throw new Error('Invalid refresh token')
     }
 
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -328,7 +339,7 @@ const fetchUserData = async () => {
     loading.value = true
     error.value = null
 
-    const response = await authenticatedFetch(`${API_BASE_URL}/users/me`)
+    const response = await authenticatedFetch(`${import.meta.env.VITE_BACKEND}/users/me`)
 
     if (!response.ok) {
       throw new Error('Failed to fetch user data')
@@ -403,7 +414,7 @@ const setup2FA = async () => {
   twoFAMessage.value = ''
   twoFAError.value = false
   try {
-    const response = await fetch('http://localhost:8000/users/2fa/setup', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/setup`, {
       method: 'POST',
       credentials: 'include',
     })
@@ -425,7 +436,7 @@ const enable2FA = async () => {
   twoFAMessage.value = ''
   twoFAError.value = false
   try {
-    const response = await fetch('http://localhost:8000/users/2fa/enable', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/enable`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -453,7 +464,7 @@ const disable2FA = async () => {
   twoFAMessage.value = ''
   twoFAError.value = false
   try {
-    const response = await fetch('http://localhost:8000/users/2fa/disable', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND}/users/2fa/disable`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -500,4 +511,7 @@ onUnmounted(() => {
     clearInterval(refreshInterval.value)
   }
 })
+
+const userName = computed(() => sanitizedUserData.value?.fullName || 'User')
+const avatarUrl = computed(() => `https://ui-avatars.com/api/?name=${encodeURIComponent(userName.value)}&background=2563eb&color=fff`)
 </script>
